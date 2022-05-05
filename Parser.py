@@ -9,7 +9,6 @@ class Parser(object):
         super(Parser, self).__init__()
         self.lexer = Lexer(path)
         self.root = Tree(id="int", type="-", value="-")
-        self.root.left = Tree(id="label", type="-", value="-")
         self.flag_interpret = False
 
     def S(self):
@@ -19,9 +18,9 @@ class Parser(object):
         Второй - интерпретация.
         """
         v = self.root
-        self.root = self.root.left
-        print("Интерпретация:")
         for i in range(2):
+            if self.flag_interpret is True:
+                print("Интерпретация:")
             self.lexer.next_tok()
             while self.lexer.sym != Lexer.EOF:
                 if self.lexer.sym == Lexer.INT:
@@ -31,7 +30,7 @@ class Parser(object):
                     self.lexer.next_tok()
                     if self.lexer.sym == Lexer.COLON:
                         self.lexer.lex = id
-                        self.B()
+                        self.C()
                     elif self.lexer.sym == Lexer.EQUAL:
                         self.lexer.lex = id
                         self.F()
@@ -48,14 +47,7 @@ class Parser(object):
 
     def B(self):
         """Описание переменной."""
-        type = None
-        if self.lexer.sym == Lexer.COLON:  # метка
-            type = "label"
-            id = self.lexer.lex
-            if self.flag_interpret is False:
-                self.root = self.root.add_node(
-                    id, type, self.lexer, self.lexer.point, self.lexer.line)
-        elif self.lexer.sym == Lexer.INT:
+        if self.lexer.sym == Lexer.INT:
             type = "int"
             self.lexer.next_tok()
             if self.lexer.sym != Lexer.ID:
@@ -65,13 +57,22 @@ class Parser(object):
                     self.lexer.lex, type, self.lexer)
         temp = self.lexer.lex
         self.lexer.next_tok()
-        if self.lexer.sym == Lexer.EQUAL and type == "int":
+        if self.lexer.sym == Lexer.EQUAL:
             self.lexer.lex = temp
             self.F()
-        elif self.lexer.sym != Lexer.SEMICOLON and type == "int":
+        elif self.lexer.sym != Lexer.SEMICOLON:
             self.lexer.error("Ожидался символ ;")
-        
 
+    def C(self):
+        """Описание метки."""
+        if self.lexer.sym == Lexer.COLON:  # метка
+            type = "label"
+            id = self.lexer.lex
+            if self.flag_interpret is False:
+                self.root = self.root.add_node(
+                    id, type, self.lexer, self.lexer.point, self.lexer.line)
+        self.lexer.next_tok()
+        
     def E(self):
         """Оператор goto"""
         self.lexer.next_tok()

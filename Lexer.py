@@ -26,10 +26,10 @@ class Lexer(object):
     # ключевые слова
     WORDS = {"goto": GOTO, "int": INT}
 
-    def error(self, msg, id1=None):
-        if id1 is not None:
+    def error(self, msg, id=None):
+        if id is not None:
             print("Семантическая ошибка: %s\nПолучено: %s\nСтрока: %d" %
-                  (msg, id1, self.line))
+                  (msg, id, self.line))
         else:
             print("Ошибка: %s\nПолучено: %s\nСтрока: %d" %
                   (msg, self.lex, self.line))

@@ -2,7 +2,7 @@ from prettytable import PrettyTable
 
 
 class Tree(object):
-    """Класс с деревом."""
+    """Семантический анализатор с внедненным интерпретатором."""
 
     def __init__(self, up=None, left=None, right=None, id=None, value=None, type=None, point=None, line=None):
         super(Tree, self).__init__()
@@ -18,10 +18,6 @@ class Tree(object):
     def set_left(self):
         self.left = Tree(self, None, None)
         return self.left
-
-    def set_right(self):
-        self.right = Tree(self, None, None)
-        return self.right
 
     def add_node(self, id, type, lexer, point=None, line=None):
         self.dup_control(id, lexer)
@@ -39,9 +35,9 @@ class Tree(object):
             i = i.up
         if i is None:
             if type == "label":
-                lexer.error("Метка не найдена", id1=id)
+                lexer.error("Метка не найдена", id=id)
             elif type == "int":
-                lexer.error("Идентификатор не найден", id1=id)
+                lexer.error("Идентификатор не найден", id=id)
         return i
 
     def dup_control(self, id, lexer):

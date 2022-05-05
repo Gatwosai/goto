@@ -1,4 +1,13 @@
 int a = 10;
 goto label1;
+
+label2:
 int c = 30;
-label1: a = 20;
+goto exit;
+
+label1:
+a = 20;
+goto label2;
+
+exit:
+int q = a;
